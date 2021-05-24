@@ -1,0 +1,233 @@
+{% load static %}
+
+<!doctype html>
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Learn Bangladesh by Interactive Digital Map">
+    <meta name="author" content="Md. Rafat Hossain, Sazzad Shopno">
+    <title>Learn Bangladesh | Digital Interactive Map</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="{% static 'css/custom.css' %}" rel="stylesheet">
+
+    <link rel="icon" href="{% static 'favicon.png' %}" sizes="16x16" type="image/png">
+    <style type="text/css">
+        html {
+            --selectedColor: #F44336;
+            --fillColor: #4CAF50;
+        }
+
+        text:hover {
+            cursor: pointer;
+        }
+
+        .st0 {
+            fill-rule: evenodd;
+            clip-rule: evenodd;
+            fill: var(--fillColor);
+            stroke: #FFFFFF;
+            cursor: pointer;
+        }
+
+        .st1 {
+            fill: #FFFFFF;
+        }
+
+        .st2 {
+            font-family: 'Calibri';
+        }
+
+        .st3 {
+            font-size: 10.697px;
+        }
+
+        .st4 {
+            font-size: 10.698px;
+        }
+
+        .st5 {
+            font-size: 6.4182px;
+        }
+
+        .st6 {
+            font-size: 7.4879px;
+        }
+
+        .st7 {
+            fill-rule: evenodd;
+            clip-rule: evenodd;
+            fill: var(--fillColor);
+            stroke: #FFFFFF;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            cursor: pointer;
+        }
+
+        .st0:hover, .st7:hover {
+            fill: var(--selectedColor);
+        }
+
+        text {
+            pointer-events: none;
+        }
+
+        .st-selected {
+            fill: var(--selectedColor) !important;
+        }
+
+        @media only screen and (min-width: 992px) {
+            .float-card {
+                position: fixed;
+                top: 30%;
+                right: 0;
+                width: 40%;
+                height: 50%;
+            }
+        }
+    </style>
+</head>
+<body class="d-flex flex-column h-100">
+
+<!-- Begin page content -->
+<main class="flex-shrink-0">
+    <div class="container">
+        <div class="row pt-3">
+            <div class="col-12 col-lg-6 text-center text-lg-start">
+                <h2 class="mb-0 pb-0"><b>Learn Bangladesh</b></h2>
+                <small>Interactive Digital Map</small>
+                <br>
+                <small class="text-muted">Developed By <a href="https://www.facebook.com/rafathossain.xyz/"
+                                                          target="_blank">Md.
+                    Rafat Hossain</a> | Map SVG by <a
+                        href="https://www.facebook.com/sazzadshopno/" target="_blank">Sazzad Shopno</a></small>
+            </div>
+            <div class="col-12 col-lg-6 text-center text-lg-end pt-2 pt-lg-0">
+                <label for="mapColor">Select default map color:</label>
+                <input type="color" id="mapColor" value="#4CAF50" onchange="changeMapColor(this.value)">
+                <br>
+                <label for="selectedColor">Select default selected color:</label>
+                <input type="color" id="selectedColor" value="#F44336" onchange="changeSelectedColor(this.value)">
+            </div>
+        </div>
+        <div class="col-12">
+            <hr class="mt-0">
+        </div>
+        <div class="row py-4">
+            <div class="col-12 col-lg-7" onmouseout="showBasic('basic')">
+                {% include 'learnbd/map_svg.html' %}
+            </div>
+            <div class="col-12 col-lg-5">
+                <div class="card float-card">
+                    <div class="card-body text-center">
+                        <h3 class="mb-0" id="instruction">
+                            <b>Click on any part of the map to learn more.</b>
+                        </h3>
+                        <div class="text-start" id="info" style="height: 300px; overflow-y: scroll" hidden>
+                            <h2>
+                                <b id="district_name"></b>
+                            </h2>
+                            <p id="summary"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<!-- Bootstrap Bundle with Popper -->
+<script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    var element = [];
+    var active = false;
+
+    $(document).ready(function () {
+        if (localStorage.getItem("lbd_mapColor") !== null) {
+            var map_color = localStorage.getItem("lbd_mapColor");
+            var selected_color = localStorage.getItem("lbd_selectedColor");
+            if (map_color !== null) {
+                changeMapColor(map_color);
+                $("#mapColor").val(map_color);
+            }
+            if (selected_color !== null) {
+                changeSelectedColor(selected_color);
+                $("#selectedColor").val(selected_color);
+            }
+        }
+
+        element = document.getElementsByTagName('path');
+        var elem_list = [];
+        for (var j = 0; j < element.length; j++) {
+            var elem_id = element[j].getAttribute('id');
+            elem_list.push(elem_id);
+            $("#" + elem_id).attr('onclick', 'markSelected(\'' + elem_id + '\')');
+            $("#" + elem_id).attr('onmouseover', 'showBasic(\'' + elem_id + '\')');
+        }
+    })
+
+    function showBasic(elem_id) {
+        if (!active) {
+            $("#info").attr('hidden', true);
+            $("#instruction").attr('hidden', false);
+            if (elem_id === 'basic') {
+                $("#instruction b").html("Click on any part of the map to learn more");
+            } else {
+                $("#instruction b").html("Click on any part of the map to learn more about " + elem_id);
+            }
+        }
+    }
+
+    function changeMapColor(color) {
+        var $html = $("html");
+        $($html).css("--fillColor", color);
+        localStorage.setItem("lbd_mapColor", color);
+    }
+
+    function changeSelectedColor(color) {
+        var $html = $("html");
+        $($html).css("--selectedColor", color);
+        localStorage.setItem("lbd_selectedColor", color);
+    }
+
+    function markSelected(path_id) {
+        for (var j = 0; j < element.length; j++) {
+            var elem_id = element[j].getAttribute('id');
+            $("#" + elem_id).attr('onclick', 'markSelected(\'' + elem_id + '\')');
+            $("#" + elem_id).removeClass('st-selected');
+        }
+        $("#" + path_id).addClass('st-selected');
+        fetchData(path_id);
+        active = true;
+    }
+
+    function capitalizeFirstLetter(string) {
+        return string.charAt(0).toUpperCase() + string.slice(1);
+    }
+
+    function fetchData(path_id) {
+        var token = '{{csrf_token}}';
+        $.ajax({
+            method: 'POST',
+            headers: {"X-CSRFToken": token},
+            url: '{% url 'get.data' %}',
+            data: {
+                'district': path_id
+            },
+            success: function (data) {
+                $("#info #district_name").html(capitalizeFirstLetter(path_id));
+                $("#info #summary").html(data[0]['summary']);
+                $("#info").attr('hidden', false);
+                $("#instruction").attr('hidden', true);
+            }
+        });
+    }
+</script>
+</body>
+</html>
