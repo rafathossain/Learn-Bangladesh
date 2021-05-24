@@ -22,8 +22,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-oo#nf+$xhb(5=3rc06d=!(t2b(7vb804x(6&-tn5ioqi%m!ihc'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-PRODUCTION = False
+DEBUG = False
+PRODUCTION = True
 
 ALLOWED_HOSTS = ['*']
 
@@ -77,11 +77,11 @@ if PRODUCTION:
         # Production configuration
         'default': {
             'ENGINE': 'django.db.backends.mysql',
-            'NAME': 'knot_backend',
+            'NAME': 'lear_nbd',
             'HOST': '127.0.0.1',
             'PORT': '3306',
-            'USER': 'knot_backend',
-            'PASSWORD': 'nxL@r9q!7HCbLLCI'
+            'USER': 'lear_nbd',
+            'PASSWORD': '33nwKH-g+jCfowH2'
         }
     }
 else:
