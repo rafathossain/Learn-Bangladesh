@@ -9,8 +9,12 @@ https://docs.djangoproject.com/en/3.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
 """
+import environ
 import os.path
 from pathlib import Path
+
+env = environ.Env()
+environ.Env.read_env()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -19,11 +23,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-oo#nf+$xhb(5=3rc06d=!(t2b(7vb804x(6&-tn5ioqi%m!ihc'
+SECRET_KEY = env('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
-PRODUCTION = True
+DEBUG = env('DEBUG')
 
 ALLOWED_HOSTS = ['*']
 
@@ -72,30 +75,16 @@ WSGI_APPLICATION = 'Learn_Bangladesh.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
-if PRODUCTION:
-    DATABASES = {
-        # Production configuration
-        'default': {
-            'ENGINE': 'django.db.backends.mysql',
-            'NAME': 'lear_nbd',
-            'HOST': '127.0.0.1',
-            'PORT': '3306',
-            'USER': 'lear_nbd',
-            'PASSWORD': '33nwKH-g+jCfowH2'
-        }
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': env('DB_NAME'),
+        'HOST': env('DB_HOST'),
+        'PORT': env('DB_PORT'),
+        'USER': env('DB_USER'),
+        'PASSWORD': env('DB_PASS')
     }
-else:
-    DATABASES = {
-        # Localhost configuration
-        'default': {
-            'ENGINE': 'django.db.backends.mysql',
-            'NAME': 'learn_bangladesh',
-            'HOST': '127.0.0.1',
-            'PORT': '8889',
-            'USER': 'root',
-            'PASSWORD': 'root'
-        }
-    }
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
