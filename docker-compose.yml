@@ -1,0 +1,22 @@
+version: '3'
+
+networks:
+  learn_bangladesh_tier:
+    driver: bridge
+
+services:
+  learn_bangladesh_web:
+    container_name: learn_bangladesh
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: ./deployment/start-app
+    restart: always
+    env_file:
+      - .env
+    volumes:
+      - .:/app
+    ports:
+      - "127.0.0.1:20006:8001"
+    networks:
+      - learn_bangladesh_tier
